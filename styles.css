@@ -223,7 +223,7 @@ body {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; height: var(--topbar-h); flex: none;
   padding: var(--safe-top) calc(16px + var(--safe-right)) 0 calc(16px + var(--safe-left));
-  background: rgba(10,15,13,.85); backdrop-filter: blur(12px);
+  background: rgba(7,11,9,.96); backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line-2); z-index: 30;
 }
@@ -535,9 +535,11 @@ body {
     position: fixed; top: var(--topbar-h); left: 0; right: 0; z-index: 24;
     flex-direction: column; background: var(--bg-2); border-bottom: 1px solid var(--line-2);
     padding: 8px calc(8px + var(--safe-right)) 8px calc(8px + var(--safe-left));
-    gap: 2px; transform: translateY(-130%); transition: transform .25s;
+    gap: 2px;
+    transform: translateY(-130%); opacity: 0; visibility: hidden; pointer-events: none;
+    transition: transform .25s ease, opacity .2s ease, visibility .25s;
   }
-  .topbar__nav.is-open { transform: none; }
+  .topbar__nav.is-open { transform: none; opacity: 1; visibility: visible; pointer-events: auto; }
   .topbar__menu { display: flex; }
   .navbtn { text-align: left; padding: 14px 14px; }
   .stat--ok .stat__txt, .stat__txt { display: none; }

@@ -1,5 +1,5 @@
 /* SCP Terminal — service worker (офлайн-кэш) */
-const CACHE = "scp-terminal-v3";
+const CACHE = "scp-terminal-v4";
 const ASSETS = [
   "./",
   "./index.html",
