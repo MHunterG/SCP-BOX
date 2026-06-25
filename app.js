@@ -422,20 +422,32 @@
   }
 
   /* ---------------- VIEWPORT / КЛАВИАТУРА (iOS) ---------------- */
-  // Высота приложения = видимая область (над клавиатурой), чтобы поля ввода
-  // не прятались за экранной клавиатурой на iOS/Android.
+  // Высоту приложения подстраиваем под видимую область ТОЛЬКО когда открыта
+  // экранная клавиатура (фокус в поле ввода) — чтобы поле не пряталось за ней.
+  // В обычном состоянии .os = 100dvh на весь экран (иначе iOS-баг: пустая
+  // полоса фона снизу, если visualViewport вернёт высоту меньше экрана).
   function initViewport() {
     var vv = window.visualViewport;
     if (!vv) return;
-    var raf = null;
+    var focused = false, raf = null;
     function apply() {
       raf = null;
-      document.documentElement.style.setProperty("--app-h", Math.round(vv.height) + "px");
+      if (focused) {
+        document.documentElement.style.setProperty("--app-h", Math.round(vv.height) + "px");
+      }
     }
-    function onChange() { if (raf == null) raf = requestAnimationFrame(apply); }
+    function onChange() { if (focused && raf == null) raf = requestAnimationFrame(apply); }
     vv.addEventListener("resize", onChange);
     vv.addEventListener("scroll", onChange);
-    apply();
+
+    var FIELD = "input, textarea";
+    document.addEventListener("focusin", function (e) {
+      if (e.target.matches && e.target.matches(FIELD)) { focused = true; apply(); }
+    });
+    document.addEventListener("focusout", function () {
+      focused = false;
+      document.documentElement.style.removeProperty("--app-h");
+    });
   }
 
   // При фокусе на поле — мягко подвести его в зону видимости.
