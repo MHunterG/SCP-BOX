@@ -1,0 +1,20 @@
+{
+  "name": "SCP // Secure Access Terminal",
+  "short_name": "SCP Terminal",
+  "description": "Защищённый терминал Фонда SCP с базой данных аномальных объектов.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070b09",
+  "theme_color": "#070b09",
+  "categories": ["entertainment", "education", "reference"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

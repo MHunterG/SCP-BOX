@@ -117,6 +117,7 @@
   function closeMenus() {
     $("#topNav").classList.remove("is-open");
     var side = $("#dbSide"); if (side) side.classList.remove("is-open");
+    var bd = $("#dbSideBackdrop"); if (bd) bd.classList.remove("is-open");
   }
 
   function switchView(view) {
@@ -192,13 +193,25 @@
         render();
       });
     });
-    // mobile sidebar via menu button when in database view
-    $("#menuToggle").addEventListener("click", function () {
-      if ($('.view--database').classList.contains("is-active")) {
-        $("#dbSide").classList.toggle("is-open");
-        $("#topNav").classList.remove("is-open");
-      }
+    // mobile: отдельная кнопка фильтров открывает боковую панель
+    $("#filterToggle").addEventListener("click", function () {
+      var open = !$("#dbSide").classList.contains("is-open");
+      $("#dbSide").classList.toggle("is-open", open);
+      $("#dbSideBackdrop").classList.toggle("is-open", open);
+      $("#topNav").classList.remove("is-open");
     });
+    $("#dbSideBackdrop").addEventListener("click", closeFilters);
+    // выбор класса/поиск на мобильном — закрыть панель после действия
+    $$("#classChips .chip").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        if (window.matchMedia("(max-width: 880px)").matches) closeFilters();
+      });
+    });
+  }
+
+  function closeFilters() {
+    $("#dbSide").classList.remove("is-open");
+    $("#dbSideBackdrop").classList.remove("is-open");
   }
 
   /* ---------------- DOCUMENT MODAL ---------------- */
