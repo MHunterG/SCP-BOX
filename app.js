@@ -421,6 +421,34 @@
     });
   }
 
+  /* ---------------- VIEWPORT / КЛАВИАТУРА (iOS) ---------------- */
+  // Высота приложения = видимая область (над клавиатурой), чтобы поля ввода
+  // не прятались за экранной клавиатурой на iOS/Android.
+  function initViewport() {
+    var vv = window.visualViewport;
+    if (!vv) return;
+    var raf = null;
+    function apply() {
+      raf = null;
+      document.documentElement.style.setProperty("--app-h", Math.round(vv.height) + "px");
+    }
+    function onChange() { if (raf == null) raf = requestAnimationFrame(apply); }
+    vv.addEventListener("resize", onChange);
+    vv.addEventListener("scroll", onChange);
+    apply();
+  }
+
+  // При фокусе на поле — мягко подвести его в зону видимости.
+  function initFocusScroll() {
+    var sel = "#termInput, #searchInput, #loginUser, .field__input";
+    document.addEventListener("focusin", function (e) {
+      if (!e.target.closest || !e.target.matches(sel)) return;
+      setTimeout(function () {
+        try { e.target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (x) {}
+      }, 250);
+    });
+  }
+
   /* ---------------- INIT ---------------- */
   document.addEventListener("DOMContentLoaded", function () {
     initLogin();
@@ -429,6 +457,8 @@
     initModal();
     initScanner();
     initClock();
+    initViewport();
+    initFocusScroll();
     runBoot();
   });
 })();
