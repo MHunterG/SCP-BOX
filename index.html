@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#0a0e0c" />
+  <meta name="description" content="SCP Foundation — Secure Access Terminal. Защищённая база данных аномальных объектов." />
+  <title>SCP // Secure Access Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0e0c'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%2300e08a' font-family='monospace' font-weight='bold'%3ESCP%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <!-- Subtle CRT overlays -->
+  <div class="crt-scanlines" aria-hidden="true"></div>
+  <div class="crt-vignette" aria-hidden="true"></div>
+  <div class="crt-flicker" aria-hidden="true"></div>
+
+  <!-- ========================= BOOT SCREEN ========================= -->
+  <section id="boot" class="boot" aria-label="Загрузка системы">
+    <div class="boot__inner">
+      <pre class="boot__log" id="bootLog"></pre>
+      <div class="boot__bar">
+        <div class="boot__bar-fill" id="bootBarFill"></div>
+      </div>
+      <div class="boot__hint" id="bootHint"></div>
+    </div>
+  </section>
+
+  <!-- ========================= LOGIN SCREEN ========================= -->
+  <section id="login" class="login hidden" aria-label="Авторизация">
+    <div class="login__card">
+      <div class="login__badge">
+        <div class="scp-logo" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <g fill="none" stroke="currentColor" stroke-width="3">
+              <circle cx="50" cy="50" r="46" />
+              <circle cx="50" cy="50" r="12" />
+              <path d="M50 4 A46 46 0 0 1 89.8 73 L67 60 A20 20 0 0 0 50 30 Z" fill="currentColor" stroke="none"/>
+              <path d="M89.8 73 A46 46 0 0 1 10.2 73 L33 60 A20 20 0 0 0 67 60 Z" fill="currentColor" stroke="none"/>
+              <path d="M10.2 73 A46 46 0 0 1 50 4 L50 30 A20 20 0 0 0 33 60 Z" fill="currentColor" stroke="none"/>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <div class="login__org">SCP FOUNDATION</div>
+          <div class="login__sub">Secure · Contain · Protect</div>
+        </div>
+      </div>
+
+      <div class="login__title">АВТОРИЗАЦИЯ ДОСТУПА</div>
+      <p class="login__warn">⚠ Несанкционированный доступ преследуется по протоколу <b>4000-ESHU</b>. Все действия записываются.</p>
+
+      <label class="field">
+        <span class="field__label">ИДЕНТИФИКАТОР ПЕРСОНАЛА</span>
+        <input id="loginUser" class="field__input" type="text" value="RESEARCHER-7" autocomplete="off" spellcheck="false" />
+      </label>
+
+      <div class="field">
+        <span class="field__label">УРОВЕНЬ ДОПУСКА</span>
+        <div class="clearance" id="clearancePicker" role="radiogroup" aria-label="Уровень допуска">
+          <button class="clr" data-level="1" role="radio" aria-checked="false">L1</button>
+          <button class="clr" data-level="2" role="radio" aria-checked="false">L2</button>
+          <button class="clr is-active" data-level="3" role="radio" aria-checked="true">L3</button>
+          <button class="clr" data-level="4" role="radio" aria-checked="false">L4</button>
+          <button class="clr clr--o5" data-level="5" role="radio" aria-checked="false">O5</button>
+        </div>
+        <span class="clearance__hint" id="clearanceHint">L3 — Секретно. Доступ к большинству материалов класса Euclid.</span>
+      </div>
+
+      <button id="loginBtn" class="btn btn--primary login__btn">
+        <span class="btn__pulse"></span>
+        ВОЙТИ В СИСТЕМУ
+      </button>
+      <div class="login__foot">SITE-19 · TERMINAL OS v4.7.2 · NODE //ALPHA</div>
+    </div>
+  </section>
+
+  <!-- ========================= DESKTOP / OS ========================= -->
+  <main id="os" class="os hidden" aria-label="Терминал базы данных">
+    <!-- Top status bar -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button class="topbar__menu" id="menuToggle" aria-label="Меню">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="topbar__brand">
+          <span class="topbar__logo">◈</span>
+          <span class="topbar__name">SCP<i>OS</i></span>
+        </div>
+        <nav class="topbar__nav" id="topNav">
+          <button class="navbtn is-active" data-view="database">База данных</button>
+          <button class="navbtn" data-view="scanner">Сканер</button>
+          <button class="navbtn" data-view="terminal">Терминал</button>
+          <button class="navbtn" data-view="about">О системе</button>
+        </nav>
+      </div>
+      <div class="topbar__right">
+        <div class="stat stat--ok" id="connStat" title="Состояние сети">
+          <span class="dot"></span><span class="stat__txt">ЗАЩИЩЁННЫЙ КАНАЛ</span>
+        </div>
+        <div class="stat" id="userStat">
+          <span class="stat__txt">RESEARCHER-7 · <b id="userLevel">L3</b></span>
+        </div>
+        <div class="stat stat--clock" id="clock">--:--:--</div>
+      </div>
+    </header>
+
+    <!-- VIEW: DATABASE -->
+    <section class="view view--database is-active" data-view="database">
+      <div class="db">
+        <!-- Sidebar / filters -->
+        <aside class="db__side" id="dbSide">
+          <div class="db__search">
+            <svg class="db__search-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input id="searchInput" type="search" placeholder="Поиск: SCP-173, бетон…" autocomplete="off" />
+          </div>
+
+          <div class="db__filters">
+            <div class="db__filters-title">КЛАСС ОБЪЕКТА</div>
+            <div class="chips" id="classChips">
+              <button class="chip is-active" data-class="all">Все</button>
+              <button class="chip chip--safe" data-class="Safe">Safe</button>
+              <button class="chip chip--euclid" data-class="Euclid">Euclid</button>
+              <button class="chip chip--keter" data-class="Keter">Keter</button>
+              <button class="chip chip--thaumiel" data-class="Thaumiel">Thaumiel</button>
+            </div>
+          </div>
+
+          <div class="db__stats" id="dbStats"></div>
+        </aside>
+
+        <!-- Object grid -->
+        <div class="db__main">
+          <div class="db__head">
+            <h1 class="db__h1">РЕЕСТР АНОМАЛЬНЫХ ОБЪЕКТОВ</h1>
+            <div class="db__count" id="resultCount">—</div>
+          </div>
+          <div class="grid" id="grid"></div>
+          <div class="db__empty hidden" id="dbEmpty">
+            <div class="db__empty-ico">⛏</div>
+            <p>ОБЪЕКТЫ НЕ НАЙДЕНЫ</p>
+            <span>Измените параметры поиска или фильтры.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: SCANNER -->
+    <section class="view view--scanner" data-view="scanner">
+      <div class="scanner">
+        <div class="scanner__radar">
+          <div class="radar">
+            <div class="radar__grid"></div>
+            <div class="radar__sweep"></div>
+            <div class="radar__center"></div>
+            <div class="radar__blips" id="radarBlips"></div>
+          </div>
+        </div>
+        <div class="scanner__panel">
+          <div class="scanner__title">СКАНЕР АНОМАЛЬНОЙ АКТИВНОСТИ</div>
+          <p class="scanner__desc">Извлечение случайного объекта из защищённого хранилища. Будьте осторожны при просмотре материалов класса Keter.</p>
+          <button class="btn btn--primary" id="scanBtn"><span class="btn__pulse"></span>ЗАПУСТИТЬ СКАНИРОВАНИЕ</button>
+          <div class="scanner__result" id="scanResult"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: TERMINAL -->
+    <section class="view view--terminal" data-view="terminal">
+      <div class="term">
+        <div class="term__out" id="termOut"></div>
+        <div class="term__input-row">
+          <span class="term__prompt">researcher@site-19:~$</span>
+          <input id="termInput" class="term__input" type="text" autocomplete="off" spellcheck="false" placeholder="введите 'help'…" />
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: ABOUT -->
+    <section class="view view--about" data-view="about">
+      <div class="about">
+        <h1 class="about__h1">О ТЕРМИНАЛЕ</h1>
+        <div class="about__grid">
+          <div class="about__card">
+            <div class="about__k">ВЕРСИЯ ОС</div><div class="about__v">SCP TERMINAL OS v4.7.2</div>
+          </div>
+          <div class="about__card">
+            <div class="about__k">УЗЕЛ</div><div class="about__v">SITE-19 · NODE //ALPHA</div>
+          </div>
+          <div class="about__card">
+            <div class="about__k">ОБЪЕКТОВ В РЕЕСТРЕ</div><div class="about__v" id="aboutCount">—</div>
+          </div>
+          <div class="about__card">
+            <div class="about__k">УРОВЕНЬ ДОПУСКА</div><div class="about__v" id="aboutLevel">L3</div>
+          </div>
+        </div>
+        <p class="about__p">Этот интерфейс — стилизованная демонстрация защищённого терминала Фонда SCP. Материалы основаны на вселенной SCP Foundation (лицензия Creative Commons BY-SA 3.0). Проект создан в образовательных и развлекательных целях.</p>
+        <div class="about__class-legend">
+          <span class="lg lg--safe">Safe — содержание тривиально</span>
+          <span class="lg lg--euclid">Euclid — поведение непредсказуемо</span>
+          <span class="lg lg--keter">Keter — крайне сложно содержать</span>
+          <span class="lg lg--thaumiel">Thaumiel — содержит другие SCP</span>
+        </div>
+        <button class="btn btn--ghost" id="logoutBtn">ЗАВЕРШИТЬ СЕАНС</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================= OBJECT MODAL ========================= -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalItem">
+    <div class="modal__backdrop" id="modalBackdrop"></div>
+    <article class="modal__doc" id="modalDoc">
+      <button class="modal__close" id="modalClose" aria-label="Закрыть">✕</button>
+      <div class="modal__body" id="modalBody"></div>
+    </article>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
