@@ -240,10 +240,19 @@
   <script src="data.js"></script>
   <script src="app.js"></script>
   <script>
-    // Регистрация service worker для офлайн-режима (PWA)
+    // Регистрация service worker (PWA, офлайн) + авто-обновление до свежей версии
     if ("serviceWorker" in navigator) {
+      var refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", function () {
+        if (refreshing) return;          // защита от цикла перезагрузок
+        refreshing = true;
+        window.location.reload();
+      });
       window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js").catch(function () { /* офлайн необязателен */ });
+        navigator.serviceWorker.register("sw.js").then(function (reg) {
+          // периодически проверять обновление
+          if (reg.update) { try { reg.update(); } catch (e) {} }
+        }).catch(function () { /* офлайн необязателен */ });
       });
     }
   </script>

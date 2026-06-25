@@ -1,5 +1,11 @@
-/* SCP Terminal — service worker (офлайн-кэш) */
-const CACHE = "scp-terminal-v5";
+/* SCP Terminal — service worker
+   Стратегия:
+   - HTML/CSS/JS/manifest: network-first (всегда свежие при наличии сети,
+     кэш используется только как офлайн-фоллбэк) — чтобы обновления
+     гарантированно доходили до установленного PWA.
+   - изображения: cache-first (они большие и неизменные).
+*/
+const CACHE = "scp-terminal-v6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -37,29 +43,40 @@ self.addEventListener("activate", (e) => {
   );
 });
 
+function isImage(url) { return /\/images\//.test(url) || /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(url); }
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
-  // network-first for navigations, cache-first for assets
-  if (req.mode === "navigate") {
+  const url = new URL(req.url);
+  const sameOrigin = url.origin === self.location.origin;
+
+  // изображения и иконки — cache-first
+  if (sameOrigin && isImage(url.pathname)) {
     e.respondWith(
-      fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy));
-        return res;
-      }).catch(() => caches.match("./index.html"))
+      caches.match(req).then((hit) =>
+        hit || fetch(req).then((res) => {
+          if (res && res.status === 200) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy));
+          }
+          return res;
+        })
+      )
     );
     return;
   }
+
+  // всё остальное (HTML/CSS/JS/manifest) — network-first
   e.respondWith(
-    caches.match(req).then((hit) =>
-      hit || fetch(req).then((res) => {
-        if (res && res.status === 200 && res.type === "basic") {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-        }
-        return res;
-      }).catch(() => hit)
+    fetch(req).then((res) => {
+      if (res && res.status === 200 && (res.type === "basic" || res.type === "cors")) {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy));
+      }
+      return res;
+    }).catch(() =>
+      caches.match(req).then((hit) => hit || (req.mode === "navigate" ? caches.match("./index.html") : undefined))
     )
   );
 });
