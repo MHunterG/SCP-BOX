@@ -16,8 +16,8 @@ window.SCP_DB = [
     name: "Скульптура — Оригинал",
     class: "Euclid",
     image: "concrete",
-    img: "http://scp-wiki.wdfiles.com/local--files/scp-173/SCP173.jpg",
-    imgCredit: "SCP Wiki · CC BY-SA 3.0",
+    img: "",
+    imgCredit: "",
     tags: ["статуя", "бетон", "движение", "линия видимости"],
     containment:
       "Объект SCP-173 должен находиться в запертом контейнере на Зоне-19. " +
@@ -77,7 +77,7 @@ window.SCP_DB = [
     name: "Чумной доктор",
     class: "Euclid",
     image: "doctor",
-    img: "http://scp-wiki.wdfiles.com/local--files/scp-049/SCP-049.jpg",
+    img: "images/scp-049.jpg",
     imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["гуманоид", "болезнь", "разум", "реанимация"],
     containment:
@@ -107,8 +107,8 @@ window.SCP_DB = [
     name: "Неуязвимая рептилия",
     class: "Keter",
     image: "reptile",
-    img: "",
-    imgCredit: "",
+    img: "images/scp-682.jpg",
+    imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["рептилия", "регенерация", "адаптация", "ненависть"],
     containment:
       "SCP-682 должен быть уничтожен при первой возможности. В настоящее время " +
@@ -167,8 +167,8 @@ window.SCP_DB = [
     name: "Старик",
     class: "Keter",
     image: "shadow",
-    img: "",
-    imgCredit: "",
+    img: "images/scp-106.jpg",
+    imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["гуманоид", "коррозия", "карманное измерение", "хищник"],
     containment:
       "SCP-106 содержится в герметично запаянном контейнере, изготовленном из " +
@@ -195,8 +195,8 @@ window.SCP_DB = [
     name: "Лестница",
     class: "Euclid",
     image: "stairs",
-    img: "",
-    imgCredit: "",
+    img: "images/scp-087.jpg",
+    imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["пространство", "лестница", "темнота", "сущность"],
     containment:
       "Вход в SCP-087 (лестничная клетка) запечатан стальной дверью. Любые " +
@@ -298,8 +298,8 @@ window.SCP_DB = [
     name: "Заводной механизм",
     class: "Safe",
     image: "machine",
-    img: "",
-    imgCredit: "",
+    img: "images/scp-914.jpg",
+    imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["машина", "преобразование", "механизм"],
     containment:
       "SCP-914 содержится в стандартной камере на Зоне-19. Эксплуатация объекта " +
@@ -350,8 +350,8 @@ window.SCP_DB = [
     name: "MalO ver1.0.0",
     class: "Euclid",
     image: "app",
-    img: "",
-    imgCredit: "",
+    img: "images/scp-1471.jpg",
+    imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["приложение", "сущность", "фотографии", "смартфон"],
     containment:
       "Распространение мобильного приложения «MalO ver1.0.0» отслеживается и " +
@@ -377,8 +377,8 @@ window.SCP_DB = [
     name: "«РОНАЛЬД РЕЙГАН РАЗРЕЗАННЫЙ ВО ВРЕМЯ ВЫСТУПЛЕНИЯ»",
     class: "Euclid",
     image: "tape",
-    img: "",
-    imgCredit: "",
+    img: "images/scp-1981.jpg",
+    imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["видео", "VHS", "запись", "аномалия"],
     containment:
       "Видеокассета SCP-1981 хранится в стандартном защищённом архиве. " +
@@ -403,8 +403,8 @@ window.SCP_DB = [
     name: "Кто-то, чтобы наблюдать за нами",
     class: "Thaumiel",
     image: "watcher",
-    img: "",
-    imgCredit: "",
+    img: "images/scp-4999.jpg",
+    imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["гуманоид", "смерть", "сострадание", "наблюдатель"],
     containment:
       "SCP-4999 не нуждается в содержании и, по имеющимся данным, не может быть " +
@@ -428,8 +428,8 @@ window.SCP_DB = [
     name: "Бог из машины",
     class: "Thaumiel",
     image: "machine",
-    img: "",
-    imgCredit: "",
+    img: "images/scp-2000.jpg",
+    imgCredit: "SCP Wiki · CC BY-SA 3.0",
     tags: ["комплекс", "восстановление", "клонирование", "K-класс"],
     containment:
       "Местоположение и порядок доступа к SCP-2000 известны только персоналу " +
