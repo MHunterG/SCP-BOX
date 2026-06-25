@@ -165,6 +165,8 @@
     var locked = !classAccessible(o.class);
     el.innerHTML =
       '<div class="card__viz"><div class="viz viz-' + o.image + '"></div>' +
+      (o.img ? '<img class="card__img" src="' + o.img + '" alt="' + o.id +
+        '" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
       '<span class="card__cls cls-' + o.class + '">' + o.class + '</span></div>' +
       '<div class="card__body">' +
         '<div class="card__id">' + o.id + '</div>' +
@@ -218,9 +220,13 @@
         '<div class="doc__banner"><div><div class="doc__item">' + o.id + '</div>' +
         '<div class="doc__name">«' + escapeHtml(o.name) + '»</div></div>' +
         '<div class="doc__cls cls-' + o.class + '" style="color:' + clsColor + '">КЛАСС: ' + o.class + '</div></div>' +
+        (o.img ? '<figure class="doc__figure"><img src="' + o.img + '" alt="' + o.id +
+          '" referrerpolicy="no-referrer" onerror="this.closest(\'figure\').remove()">' +
+          '<figcaption>' + escapeHtml(o.imgCredit || "") + '</figcaption></figure>' : "") +
         section("ОСОБЫЕ УСЛОВИЯ СОДЕРЖАНИЯ", o.containment) +
         section("ОПИСАНИЕ", o.description) +
         (o.addendum ? section("ДОПОЛНЕНИЕ", o.addendum) : "") +
+        (o.discovered ? section("ИСТОРИЯ ОБНАРУЖЕНИЯ", o.discovered) : "") +
         '<div class="doc__section"><div class="doc__h">МЕТКИ</div><div class="doc__tags">' +
         (o.tags || []).map(function (t) { return '<span class="doc__tag">#' + escapeHtml(t) + '</span>'; }).join("") +
         '</div></div>' +
