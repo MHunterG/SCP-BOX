@@ -5,7 +5,7 @@
      гарантированно доходили до установленного PWA.
    - изображения: cache-first (они большие и неизменные).
 */
-const CACHE = "scp-terminal-v6";
+const CACHE = "scp-terminal-v7";
 const ASSETS = [
   "./",
   "./index.html",

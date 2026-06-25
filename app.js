@@ -421,33 +421,32 @@
     });
   }
 
-  /* ---------------- VIEWPORT / КЛАВИАТУРА (iOS) ---------------- */
-  // Высоту приложения подстраиваем под видимую область ТОЛЬКО когда открыта
-  // экранная клавиатура (фокус в поле ввода) — чтобы поле не пряталось за ней.
-  // В обычном состоянии .os = 100dvh на весь экран (иначе iOS-баг: пустая
-  // полоса фона снизу, если visualViewport вернёт высоту меньше экрана).
+  /* ---------------- VIEWPORT / ВЫСОТА (iOS) ---------------- */
+  // iOS на старте отдаёт высоту от «большого» вьюпорта (как будто тулбары
+  // спрятаны), из-за чего 100dvh / fixed inset:0 оказываются выше реально
+  // видимой области и снизу вылезает пустота. Поэтому жёстко задаём высоту
+  // из visualViewport.height (реально видимая зона) и пересчитываем на
+  // resize / orientationchange (с отложенным повтором — iOS отдаёт верное
+  // значение не сразу). Это же корректно ужимает экран под клавиатуру.
   function initViewport() {
-    var vv = window.visualViewport;
-    if (!vv) return;
-    var focused = false, raf = null;
-    function apply() {
-      raf = null;
-      if (focused) {
-        document.documentElement.style.setProperty("--app-h", Math.round(vv.height) + "px");
-      }
+    var de = document.documentElement;
+    var raf = null;
+    function vh() {
+      return (window.visualViewport && window.visualViewport.height) || window.innerHeight;
     }
-    function onChange() { if (focused && raf == null) raf = requestAnimationFrame(apply); }
-    vv.addEventListener("resize", onChange);
-    vv.addEventListener("scroll", onChange);
+    function apply() { raf = null; de.style.setProperty("--app-h", Math.round(vh()) + "px"); }
+    function onChange() { if (raf == null) raf = requestAnimationFrame(apply); }
+    function recompute() { onChange(); setTimeout(apply, 250); setTimeout(apply, 550); }
 
-    var FIELD = "input, textarea";
-    document.addEventListener("focusin", function (e) {
-      if (e.target.matches && e.target.matches(FIELD)) { focused = true; apply(); }
-    });
-    document.addEventListener("focusout", function () {
-      focused = false;
-      document.documentElement.style.removeProperty("--app-h");
-    });
+    apply();
+    window.addEventListener("resize", onChange);
+    window.addEventListener("orientationchange", recompute);
+    window.addEventListener("pageshow", recompute);
+    window.addEventListener("load", recompute);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", onChange);
+      window.visualViewport.addEventListener("scroll", onChange);
+    }
   }
 
   // При фокусе на поле — мягко подвести его в зону видимости.
